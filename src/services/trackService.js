@@ -5,4 +5,26 @@ export const getTracks = async () => {
   return response.json();
 };
 
-// Add more functions for adding, updating, deleting tracks...
+export const createTrack = async (trackData) => {
+  const response = await fetch(BASE_URL, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify(trackData),
+  });
+  return response.json();
+};
+
+export const updateTrack = async (id, trackData) => {
+  const response = await fetch(`${BASE_URL}/${id}`, {
+    method: 'PUT',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify(trackData),
+  });
+  return response.json();
+};
+
+export const deleteTrack = async (id) => {
+  await fetch(`${BASE_URL}/${id}`, {
+    method: 'DELETE',
+  });
+};
