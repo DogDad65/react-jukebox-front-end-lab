@@ -3,6 +3,8 @@ import TrackList from "./components/TrackList";
 import TrackForm from "./components/TrackForm";
 import NowPlaying from "./components/NowPlaying";
 import { getTracks } from "./services/trackService";
+import './App.css'; // Path to your CSS file
+
 
 const App = () => {
   const [tracks, setTracks] = useState([]);
@@ -10,7 +12,6 @@ const App = () => {
   const [currentTrack, setCurrentTrack] = useState(null);
   const [nowPlaying, setNowPlaying] = useState(null);
 
-  // Fetch the tracks from the server when the app loads
   useEffect(() => {
     const fetchTracks = async () => {
       const data = await getTracks();
@@ -19,18 +20,24 @@ const App = () => {
     fetchTracks();
   }, []);
 
-  // Function to handle adding a new track
   const handleAddTrack = (newTrack) => {
     setTracks([...tracks, newTrack]);
   };
 
-  const handlePlay = (track) => {
-    setNowPlaying(track);
+  const handleEdit = (track) => {
+    setCurrentTrack(track);   // Set the track to be edited
+    setShowForm(true);        // Show the form for editing
   };
 
-  const handleEdit = (track) => {
-    setCurrentTrack(track);
-    setShowForm(true);
+  const handleEditTrack = (updatedTrack) => {
+    setTracks(tracks.map(track => track._id === updatedTrack._id ? updatedTrack : track));
+    setShowForm(false);  
+  };
+  
+  
+
+  const handlePlay = (track) => {
+    setNowPlaying(track);
   };
 
   return (
@@ -41,13 +48,14 @@ const App = () => {
       </button>
       {showForm && (
         <TrackForm
-          currentTrack={currentTrack}
-          onClose={() => setShowForm(false)}
-          onAddTrack={handleAddTrack} // Pass the function to TrackForm
-        />
+        currentTrack={currentTrack}
+        onClose={() => setShowForm(false)}
+        onAddTrack={handleAddTrack}
+        onEditTrack={handleEditTrack}  
+      />
       )}
-      <TrackList tracks={tracks} onPlay={handlePlay} onEdit={handleEdit} />
-      <NowPlaying currentTrack={nowPlaying} />
+      <TrackList tracks={tracks} onPlay={handlePlay} onEdit={handleEdit} setTracks={setTracks} />
+      {nowPlaying && <NowPlaying currentTrack={nowPlaying} />}
     </div>
   );
 };

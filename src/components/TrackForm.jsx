@@ -1,12 +1,13 @@
 import { useState, useEffect } from 'react';
 import { createTrack, updateTrack } from '../services/trackService';
 
-const TrackForm = ({ currentTrack, onClose, onAddTrack }) => {
+const TrackForm = ({ currentTrack, onClose, onAddTrack, onEditTrack }) => {
   const [formData, setFormData] = useState({
     title: '',
     artist: ''
   });
 
+  // Populate form fields if editing a track
   useEffect(() => {
     if (currentTrack) {
       setFormData({
@@ -18,13 +19,21 @@ const TrackForm = ({ currentTrack, onClose, onAddTrack }) => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+
     if (currentTrack) {
-      await updateTrack(currentTrack._id, formData);
+      // Call updateTrack and update the parent state
+      try {
+        const updatedTrack = await updateTrack(currentTrack._id, formData);
+        onEditTrack(updatedTrack);  // Call onEditTrack to update state in App.jsx
+      } catch (error) {
+        console.error('Error updating track:', error);
+      }
     } else {
       const newTrack = await createTrack(formData);
-      onAddTrack(newTrack);  
+      onAddTrack(newTrack);
     }
-    onClose(); 
+
+    onClose();  // Close the form after submission
   };
 
   return (

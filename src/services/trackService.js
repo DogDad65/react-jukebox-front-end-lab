@@ -14,13 +14,20 @@ export const createTrack = async (trackData) => {
   return response.json();
 };
 
-export const updateTrack = async (id, trackData) => {
-  const response = await fetch(`${BASE_URL}/${id}`, {
+export const updateTrack = async (id, updatedData) => {
+  const response = await fetch(`${BASE_URL}/${id}`, { // Use BASE_URL here
     method: 'PUT',
-    headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify(trackData),
+    headers: {
+      'Content-Type': 'application/json',
+    },
+    body: JSON.stringify(updatedData),
   });
-  return response.json();
+  
+  if (!response.ok) {
+    throw new Error('Failed to update track');
+  }
+
+  return response.json();  // Return the updated track
 };
 
 export const deleteTrack = async (id) => {
